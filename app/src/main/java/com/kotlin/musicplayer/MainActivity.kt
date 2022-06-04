@@ -12,15 +12,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var player : JcPlayerView  // define player use Jcplayer
 
-    private var firebaseAuth : FirebaseAuth ?= null
-    private var currentUser : FirebaseUser ?= null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        firebaseAuth = FirebaseAuth.getInstance()
-        currentUser = firebaseAuth!!.currentUser
 
         // get firebase storage a url
         val url1 = "https://firebasestorage.googleapis.com/v0/b/musicplayer-147fc.appspot.com/o/Naul%20%20-%20Memory%20Of%20The%20Wind%20%5Bmp3clan.com%5D.mp3?alt=media&token=41a84036-d4e2-40b9-927a-930bb84e9309"
@@ -36,19 +30,5 @@ class MainActivity : AppCompatActivity() {
         player.initPlaylist(jcAudios, null)
 
         player.createNotification()
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        if (currentUser == null) {
-            sendToLoginActivity()
-        }
-    }
-
-    // run the app popout login activity first
-    private fun sendToLoginActivity() {
-        val intent = Intent(this@MainActivity, LoginActivity::class.java)
-        startActivity(intent)
     }
 }

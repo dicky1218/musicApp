@@ -1,90 +1,116 @@
 package com.kotlin.musicplayer
 
-import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import kotlinx.android.synthetic.main.activity_login.*
+import com.kotlin.musicplayer.databinding.ActivityLoginBinding
+import java.util.concurrent.Executor
 
-class LoginActivity : AppCompatActivity(), View.OnClickListener{
+class LoginActivity : AppCompatActivity() {
 
-    private var currentUser : FirebaseUser ?= null
-    private var firebaseAuth : FirebaseAuth ?= null
-    var progressDialog : ProgressDialog?= null
+    private lateinit var binding: ActivityLoginBinding
+    private lateinit var firebaseAuth: FirebaseAuth
+
+    private lateinit var executor: Executor
+    private lateinit var biometricPrompt: BiometricPrompt
+    private lateinit var promptInfo: BiometricPrompt.PromptInfo
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         firebaseAuth = FirebaseAuth.getInstance()
-        currentUser = firebaseAuth!!.currentUser
-        progressDialog = ProgressDialog(this)
 
-        create_account.setOnClickListener(this)
-        login_button.setOnClickListener(this)
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        if (currentUser != null) {
-            sendToMainActivity()
+        binding.textView.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
         }
-    }
 
-    private fun sendToMainActivity() {
-        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-        startActivity(intent)
-    }
+        binding.button.setOnClickListener {
+            val email = binding.emailEt.text.toString()
+            val pass = binding.passET.text.toString()
 
-    private fun sendToRegisterActivity() {
-        val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun onClick(p0: View?) {
-        if (p0 == create_account) {
-            sendToRegisterActivity()
-        }
-        if (p0 == login_button) {
-            allowUserLogin()
-        }
-    }
-
-    private fun allowUserLogin() {
-        val email = login_email.text.toString()
-        val password = login_password.text.toString()
-
-        progressDialog!!.setTitle("Loading")
-        progressDialog!!.setMessage("Account is creating")
-        progressDialog!!.setCanceledOnTouchOutside(true)
-        progressDialog!!.show()
-
-        if (email.isEmpty()) {
-            Toast.makeText(this@LoginActivity, "Email cannot be empty", Toast.LENGTH_SHORT).show()
-        } else if (password.isEmpty()) {
-            login_password.error = "cannot be empty"
-        } else {
-            firebaseAuth!!.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(object : OnCompleteListener<AuthResult>{
-                    override fun onComplete(p0: Task<AuthResult>) {
-                        if (p0.isSuccessful) {
-                            sendToMainActivity()
-                            Toast.makeText(this@LoginActivity, "Login Successfully", Toast.LENGTH_SHORT).show()
-                            progressDialog!!.dismiss()
-                        } else {
-                            Toast.makeText(this@LoginActivity, "Try Again", Toast.LENGTH_SHORT).show()
-                            progressDialog!!.dismiss()
-                        }
+            if (email.isNotEmpty() && pass.isNotEmpty()) {
+                firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
                     }
-                })
+                }
+            } else {
+                Toast.makeText(this, "Empty Fields are not Allowed", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        executor = ContextCompat.getMainExecutor(this)
+
+        biometricPrompt = BiometricPrompt(this, executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    Toast.makeText(applicationContext,
+                        "Authentication error: $errString", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                override fun onAuthenticationSucceeded(
+                    result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    Toast.makeText(applicationContext,
+                        "Authentication succeeded!", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    Toast.makeText(applicationContext, "Authentication failed",
+                        Toast.LENGTH_SHORT)
+                        .show()
+                }
+            })
+
+        promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Biometric login for my app")
+            .setSubtitle("Log in using your biometric credential")
+            .setNegativeButtonText("Use account password")
+            .build()
+
+        val biometricLoginButton = findViewById<Button>(R.id.biometric_login)
+        biometricLoginButton.setOnClickListener {
+            biometricPrompt.authenticate(promptInfo)
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val biometricStatusTextView = findViewById<TextView>(R.id.biometric_status)
+        val biometricManager = BiometricManager.from(this)
+        when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
+            BiometricManager.BIOMETRIC_SUCCESS ->
+                biometricStatusTextView.text = "App can authenticate using biometrics."
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
+                biometricStatusTextView.text = "No biometric features available on this device."
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
+                biometricStatusTextView.text = "Biometric features are currently unavailable."
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->
+                // Prompts the user to create credentials that your app accepts.
+                biometricStatusTextView.text = "Biometric features are not enrolled."
         }
     }
+
 }
