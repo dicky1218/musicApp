@@ -10,11 +10,13 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_register.*
 
+// handle register account
 class RegisterActivity : AppCompatActivity() , View.OnClickListener{
 
-    var mAuth : FirebaseAuth ?= null
+    private var mAuth : FirebaseAuth ?= null
     var progressDialog : ProgressDialog ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +24,7 @@ class RegisterActivity : AppCompatActivity() , View.OnClickListener{
         setContentView(R.layout.activity_register)
 
         mAuth = FirebaseAuth.getInstance()
+
         progressDialog = ProgressDialog(this)
 
         already_have_account.setOnClickListener(this)
@@ -39,14 +42,15 @@ class RegisterActivity : AppCompatActivity() , View.OnClickListener{
     }
 
     private fun createNewAccount() {
-        var email = register_email.text.toString()
-        var password = register_password.text.toString()
+        val email = register_email.text.toString()
+        val password = register_password.text.toString()
 
         progressDialog!!.setTitle("Loading")
         progressDialog!!.setMessage("Account is creating")
         progressDialog!!.setCanceledOnTouchOutside(true)
         progressDialog!!.show()
 
+        // checking email and password
         if (email.isEmpty()) {
             Toast.makeText(this@RegisterActivity, "Email cannot be empty", Toast.LENGTH_SHORT).show()
         } else if (password.isEmpty()) {
@@ -71,7 +75,7 @@ class RegisterActivity : AppCompatActivity() , View.OnClickListener{
     }
 
     private fun sendToLoginActivity() {
-        var intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+        val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
         startActivity(intent)
     }
 }
