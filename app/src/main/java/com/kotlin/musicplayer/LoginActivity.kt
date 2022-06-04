@@ -73,6 +73,8 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext,
                         "Authentication succeeded!", Toast.LENGTH_SHORT)
                         .show()
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    startActivity(intent)
                 }
 
                 override fun onAuthenticationFailed() {
