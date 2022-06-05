@@ -1,12 +1,16 @@
 package com.kotlin.musicplayer
 
-import android.content.Intent
+import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.example.jean.jcplayer.model.JcAudio
 import com.example.jean.jcplayer.view.JcPlayerView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+
+data class Song (
+    val songUrl: String = ""
+)
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,10 +20,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // get firebase storage a url
-        val url1 = "https://firebasestorage.googleapis.com/v0/b/musicplayer-147fc.appspot.com/o/Naul%20%20-%20Memory%20Of%20The%20Wind%20%5Bmp3clan.com%5D.mp3?alt=media&token=41a84036-d4e2-40b9-927a-930bb84e9309"
-        val url2 = "https://firebasestorage.googleapis.com/v0/b/musicplayer-147fc.appspot.com/o/01.%20%EA%BD%83%EA%B8%B8%20(Prod.%20By%20%EC%A7%80%EC%BD%94(ZICO)).mp3?alt=media&token=51ed2724-cf90-40ba-928f-f00924527ce1"
+//        val db = FirebaseFirestore.getInstance()
+//        val availableTimesRef = db.collection("song").document("songs")
+//        availableTimesRef.get().addOnCompleteListener {
+//            if (it.isSuccessful) {
+//                val data = it.result.data
+//                data?.let {
+//                    for ((key, value) in data) {
+//                        val v = value as Map<*, *>
+//                        val songUrl = v["songUrl"]
+//                        Log.d(TAG, "$key -> $songUrl")
+//                    }
+//                }
+//            }
+//        }
 
+        // get firebase storage a url
+        var url1 = "https://firebasestorage.googleapis.com/v0/b/musicplayer-147fc.appspot.com/o/song1.mp3?alt=media&token=284f6e17-e9da-4069-9cf5-df98b05bd338"
+        var url2 = "https://firebasestorage.googleapis.com/v0/b/musicplayer-147fc.appspot.com/o/song2.mp3?alt=media&token=00635209-5930-438d-bd7b-d89954b097c6"
         player = findViewById(R.id.jcplayer) // find jcplayer xml id
 
         // create arraylist store url to play song
