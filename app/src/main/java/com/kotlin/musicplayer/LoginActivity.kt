@@ -39,10 +39,10 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // checking when success login then intent the page to main activity
+        // handle checking function
         binding.button.setOnClickListener {
-            val email = binding.emailEt.text.toString()     // binding email id in XML
-            val pass = binding.passET.text.toString()   // binding password id in XML
+            val email = binding.emailEt.text.toString()     // set email val to string
+            val pass = binding.passET.text.toString()   // set password val to string
 
             // email and password checking, and intent view to main activity
             if (email.isNotEmpty() && pass.isNotEmpty()) {
