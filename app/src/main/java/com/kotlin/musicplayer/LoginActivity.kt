@@ -31,17 +31,20 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater) // Inflate the layout for this fragment
         setContentView(binding.root)
 
-        firebaseAuth = FirebaseAuth.getInstance()   //
+        firebaseAuth = FirebaseAuth.getInstance()   // return firebaseauth instance
 
+        // intent the text switch to register activity
         binding.textView.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
 
+        // checking when success login then intent the page to main activity
         binding.button.setOnClickListener {
-            val email = binding.emailEt.text.toString()
-            val pass = binding.passET.text.toString()
+            val email = binding.emailEt.text.toString()     // binding email id in XML
+            val pass = binding.passET.text.toString()   // binding password id in XML
 
+            // email and password checking, and intent view to main activity
             if (email.isNotEmpty() && pass.isNotEmpty()) {
                 firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -58,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
 
         executor = ContextCompat.getMainExecutor(this)
 
+        // provided to BiometricPrompt after calling the BiometricPrompt's authenticate function
         biometricPrompt = BiometricPrompt(this, executor,
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -67,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
                         .show()
                 }
 
+                // when auth success, intent the view to main activity
                 override fun onAuthenticationSucceeded(
                     result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
@@ -85,12 +90,14 @@ class LoginActivity : AppCompatActivity() {
                 }
             })
 
+        // provide appearance and behavioural configuration the the BiometricPrompt object
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Biometric login for my app")
             .setSubtitle("Log in using your biometric credential")
             .setNegativeButtonText("Use account password")
             .build()
 
+        // prompt the system's Biometric Prompt
         val biometricLoginButton = findViewById<Button>(R.id.biometric_login)
         biometricLoginButton.setOnClickListener {
             biometricPrompt.authenticate(promptInfo)
@@ -98,6 +105,8 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    // used to check the availability of the system's biometric feature
+    // check for the presence of a PIN, pattern, or password
     override fun onResume() {
         super.onResume()
         val biometricStatusTextView = findViewById<TextView>(R.id.biometric_status)
