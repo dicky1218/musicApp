@@ -17,21 +17,21 @@ import java.util.concurrent.Executor
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityLoginBinding
-    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var binding: ActivityLoginBinding  // binding the login activity
+    private lateinit var firebaseAuth: FirebaseAuth     // define firebase auth
 
-    private lateinit var executor: Executor
-    private lateinit var biometricPrompt: BiometricPrompt
-    private lateinit var promptInfo: BiometricPrompt.PromptInfo
+    private lateinit var executor: Executor     // for creating a thread and run a long-running task
+    private lateinit var biometricPrompt: BiometricPrompt   // manage a system-provided biometric prompt
+    private lateinit var promptInfo: BiometricPrompt.PromptInfo // configure how the BiometricPrompt should appear and behave
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater) // Inflate the layout for this fragment
         setContentView(binding.root)
 
-        firebaseAuth = FirebaseAuth.getInstance()
+        firebaseAuth = FirebaseAuth.getInstance()   //
 
         binding.textView.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
