@@ -112,7 +112,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun login(email: String, pass: String) {
+    fun login(email: String, pass: String): Boolean {
         // email and password checking, and intent view to main activity
         if (email.isNotEmpty() && pass.isNotEmpty()) {
             firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
@@ -125,6 +125,8 @@ class LoginActivity : AppCompatActivity() {
             }
         } else {
             Toast.makeText(this, "Empty Fields are not Allowed", Toast.LENGTH_SHORT).show()
+            return false
         }
+        return true
     }
 }
