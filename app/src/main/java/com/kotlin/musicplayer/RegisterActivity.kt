@@ -26,31 +26,35 @@ class RegisterActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
-
+//
         // handle checking function
         binding.button.setOnClickListener {
             val email = binding.emailEt.text.toString() // set email val to string
             val pass = binding.passET.text.toString()   // set password val to string
             val confirmPass = binding.confirmPassEt.text.toString() // set confirm password val to string
 
-            // email and password checking, when success then intent to login activity
-            // otherwise, fail will prompt out warning message
-            if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
-                if (pass == confirmPass) {
-                    firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            val intent = Intent(this, LoginActivity::class.java)
-                            startActivity(intent)
-                        } else {
-                            Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
-                        }
+            register(email, pass, confirmPass)
+        }
+    }
+
+    fun register(email: String, pass: String, confirmPass: String) {
+        if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
+            if (pass == confirmPass) {
+                firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    Toast.makeText(this, "Password is not matching", Toast.LENGTH_SHORT).show()
-                }
+               }
             } else {
-                Toast.makeText(this, "Empty Fields are not Allowed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Password is not matching", Toast.LENGTH_SHORT).show()
+                println("Password is not matching")
             }
+        } else {
+            Toast.makeText(this, "Empty Fields are not Allowed", Toast.LENGTH_SHORT).show()
+            println("Empty Fields are not Allowed")
         }
     }
 }
