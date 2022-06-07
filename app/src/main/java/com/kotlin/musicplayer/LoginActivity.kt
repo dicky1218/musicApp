@@ -44,19 +44,7 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.emailEt.text.toString()     // set email val to string
             val pass = binding.passET.text.toString()   // set password val to string
 
-            // email and password checking, and intent view to main activity
-            if (email.isNotEmpty() && pass.isNotEmpty()) {
-                firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } else {
-                Toast.makeText(this, "Empty Fields are not Allowed", Toast.LENGTH_SHORT).show()
-            }
+            login(email, pass)
         }
 
         executor = ContextCompat.getMainExecutor(this)
@@ -124,4 +112,19 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    fun login(email: String, pass: String) {
+        // email and password checking, and intent view to main activity
+        if (email.isNotEmpty() && pass.isNotEmpty()) {
+            firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            Toast.makeText(this, "Empty Fields are not Allowed", Toast.LENGTH_SHORT).show()
+        }
+    }
 }

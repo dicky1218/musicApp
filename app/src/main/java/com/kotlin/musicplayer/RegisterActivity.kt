@@ -37,7 +37,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    fun register(email: String, pass: String, confirmPass: String) {
+    fun register(email: String, pass: String, confirmPass: String): Boolean {
         if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
             if (pass == confirmPass) {
                 firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
@@ -51,10 +51,13 @@ class RegisterActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Password is not matching", Toast.LENGTH_SHORT).show()
                 println("Password is not matching")
+                return false
             }
         } else {
             Toast.makeText(this, "Empty Fields are not Allowed", Toast.LENGTH_SHORT).show()
             println("Empty Fields are not Allowed")
+            return false
         }
+        return true
     }
 }
