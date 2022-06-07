@@ -37,6 +37,8 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    // handle register function
+    // check email and password
     fun register(email: String, pass: String, confirmPass: String): Boolean {
         if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
             if (pass == confirmPass) {
