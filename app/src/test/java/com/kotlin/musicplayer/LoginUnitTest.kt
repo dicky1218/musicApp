@@ -17,6 +17,7 @@ class LoginUnitTest {
         assertTrue(result)
     }
 
+    // test login incorrect user
     @Test
     fun `login incorrect user`() {
         val objects = RegisterActivity()
