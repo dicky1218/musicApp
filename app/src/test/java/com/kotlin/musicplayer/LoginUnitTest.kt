@@ -9,6 +9,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class LoginUnitTest {
     @Test
+
+    // test login correct user
     fun `login correct user`() {
         val objects = LoginActivity()
         val result = objects.login("admin@gmail.com", "P@ssw0rd")
