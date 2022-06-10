@@ -24,6 +24,7 @@ class RegisterUnitTest {
         assertFalse(result)
     }
 
+    // register empty field
     @Test
     fun `register empty field`() {
         val objects = RegisterActivity()
