@@ -16,7 +16,7 @@ class RegisterUnitTest {
         assertTrue(result)
     }
 
-    // register incorrect password
+    // test register incorrect password
     @Test
     fun `register incorrect password`() {
         val objects = RegisterActivity()
