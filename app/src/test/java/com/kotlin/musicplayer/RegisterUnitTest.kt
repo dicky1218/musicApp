@@ -28,4 +28,10 @@ class RegisterUnitTest {
         val result = objects.register("test2@gmail.com", "", "")
         assertFalse(result)
     }
+    @Test
+    fun `register empty field`() {
+        val objects = RegisterActivity()
+        val result = objects.register("test2@gmail.com", "", "")
+        assertFalse(result)
+    }
 }
