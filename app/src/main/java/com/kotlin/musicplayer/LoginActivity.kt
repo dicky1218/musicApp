@@ -107,6 +107,7 @@ class LoginActivity : AppCompatActivity() {
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
                 biometricStatusTextView.text = "Biometric features are currently unavailable."
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->
+
                 // Prompts the user to create credentials that your app accepts.
                 biometricStatusTextView.text = "Biometric features are not enrolled."
         }
