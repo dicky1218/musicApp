@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class RegisterUnitTest {
     @Test
+    // test register correct user
     fun `register correct user`() {
         val objects = RegisterActivity()
         val result = objects.register("test2@gmail.com", "P@ssw0rd", "P@ssw0rd")
